@@ -21,8 +21,12 @@ from app.core.logger import logger
 
 # ─────────────────────────────────────────────
 SECTIONS = {
-    "100": "정치", "101": "경제", "102": "사회",
-    "103": "생활/문화", "104": "세계", "105": "IT/과학",
+    "100": 1, #정치
+    "101": 2, #경제
+    "102": 6, #사회
+    "103": 4, #생활/문화
+    "104": 3, #세계
+    "105": 5, #IT/과학
 }
 
 def _get_driver(headless: bool = True) -> webdriver.Chrome:
@@ -92,8 +96,16 @@ def enrich_articles(news_list: List[Dict]) -> List[Dict]:
                     By.CSS_SELECTOR,
                     'span.media_end_head_info_datestamp_time._ARTICLE_DATE_TIME'
                 )
-                item["published_at"] = dt_tag.get_attribute("data-date-time")
-                print("기사 입력 시간 크롤링 완료")
+                raw_date_str = dt_tag.get_attribute("data-date-time")  # 예: "2025-02-28T12:23:00"
+    
+                # 문자열을 datetime 객체로 변환
+                parsed_date = datetime.fromisoformat(raw_date_str)
+
+                # 다시 ISO 8601 형식으로 문자열 변환 (T 포함)
+                iso_date = parsed_date.isoformat()  # 👉 결과: "2025-02-28T12:23:00"
+
+                item["published_at"] = iso_date
+                print("ISO 형식으로 변환 완료")
             except Exception:
                 item["published_at"] = ""
 

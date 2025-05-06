@@ -13,7 +13,7 @@ from moviepy.video.fx.resize import resize
 from app.core.logger import logger
 from app.services.storage import upload_file, upload_json
 from app.services.tags import generate as generate_tags
-from app.services.to_urequest import meta_payload
+from app.services.to_request import post_metadata_to_be as meta_payload
 
 FONT_PATH = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
 W, H = 1080, 1920
@@ -66,7 +66,7 @@ def build_and_upload(
     """
     반환: {style:{video_url, thumbnail_url}}  (+meta_url)
     """
-    date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    date = datetime.utcnow().isoformat(timespec='seconds')
     out_dir = Path(f"./output/moviepy/{date}/{article_idx}"); out_dir.mkdir(parents=True, exist_ok=True)
 
     if video_dir:

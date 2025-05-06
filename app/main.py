@@ -23,7 +23,7 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api")
 
-# (선택) 공통 API‑Key 보안 헤더
+# API‑Key 보안 헤더 <- 필요하면 쓰기기
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
