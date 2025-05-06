@@ -66,6 +66,7 @@ def build_and_upload(
     """
     반환: {style:{video_url, thumbnail_url}}  (+meta_url)
     """
+    
     date = datetime.utcnow().isoformat(timespec='seconds')
     out_dir = Path(f"./output/moviepy/{date}/{article_idx}"); out_dir.mkdir(parents=True, exist_ok=True)
 
