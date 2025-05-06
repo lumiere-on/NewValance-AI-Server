@@ -8,8 +8,8 @@ services:
       - "8000:8000"
     env_file:
       - .env
-    environment:
-      - SKIP_MODEL_LOAD=1
+    # environment:
+    #   - SKIP_MODEL_LOAD=1
     volumes:
       - .:/app
       - ./keys:/app/keys:ro        # GCP TTS 인증 키
