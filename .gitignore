@@ -1,0 +1,5 @@
+.env
+keys/
+*.json
+_capstone/
+output/
