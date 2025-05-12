@@ -23,7 +23,7 @@ def _wrap(t: str, w: int = 20) -> List[str]:
     return textwrap.wrap(t, width=w)
 
 def _thumbnail(video_path: str, sec: int = 1) -> str:
-    clip = VideoFileClip(video_path)
+    clip = VideoFileClip(str(video_path))
     frame = clip.get_frame(sec)
     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     thumb_path = Path(video_path).with_suffix("_thumbnail.jpg").as_posix()
@@ -54,11 +54,11 @@ def build_and_upload(
     casual_mp3: str,
     article_idx: str,
     news_title: str,
-    category_id: str,
+    category_id: int,
     original_url: str,
     published_at: str,
     summary_text: str,
-    tags: list[str],
+    tags: str,
     upload: bool = True,
     video_dir: str | None=None,
 
@@ -67,19 +67,17 @@ def build_and_upload(
     반환: {style:{video_url, thumbnail_url}}  (+meta_url)
     """
     
-    date = datetime.utcnow().isoformat(timespec='seconds')
+    date = datetime.utcnow().isoformat(timespec='seconds').replace(":", "-")
     out_dir = Path(f"./output/moviepy/{date}/{article_idx}"); out_dir.mkdir(parents=True, exist_ok=True)
 
+    mp4s = []
     if video_dir:
         mp4s = sorted(str(p) for p in Path(video_dir).glob("output_*.mp4"))
-        # 정상처리 로직
-    else:
-        mp4s = []  # video가 없는 경우 빈 배열 처리
 
-    # mp4s가 없을 때의 로직 추가
     if not mp4s:
         logger.info("[UPLOAD] TTV 비디오가 없습니다. 음성/썸네일만 업로드 진행합니다.")
-        
+
+ 
     results: Dict[str, Dict[str, str]] = {}
     formal_video_url=None
     casual_video_url=None
@@ -89,22 +87,28 @@ def build_and_upload(
         ("casual", casual_subs, casual_mp3)
     ]:
         if not Path(mp3).is_file(): continue
-        clip = _make_video(mp4s, subs, mp3)
-        if not clip: continue
-        out_mp4 = out_dir / f"{style}_{article_idx}.mp4"
-        clip.write_videofile(out_mp4.as_posix(), codec="libx264", audio_codec="aac")
-        clip.close()
+        if mp4s: 
+            clip = _make_video(mp4s, subs, mp3)
+            if not clip: continue
+            out_mp4 = out_dir / f"{style}_{article_idx}.mp4"
+            clip.write_videofile(out_mp4.as_posix(), codec="libx264", audio_codec="aac")
+            clip.close()
 
-        # ── 썸네일
-        thumb_local = _thumbnail(out_mp4)
+        else: 
+            out_mp4 = Path(mp3)
+            thumb_local = None
 
         # ── 업로드
         if upload:
             video_url = upload_file(out_mp4)
-            thumb_url = upload_file(thumb_local)
-            f_thumb_url = thumb_url
+            if thumb_local:
+                thumb_url = upload_file(thumb_local)
+                if style == "formal":
+                    f_thumb_url = thumb_url 
         else:
-            video_url, thumb_url = out_mp4.as_posix(), thumb_local
+            video_url = out_mp4.as_posix()
+            thumb_url = thumb_local if thumb_local else None
+            
 
         results[style] = {"video_url": video_url, "thumbnail_url": thumb_url}
         formal_video_url = results.get("formal", {}).get("video_url")
@@ -125,8 +129,7 @@ def build_and_upload(
                 "normalVersionUrl": formal_video_url,
                 "thumbnailUrl": f_thumb_url,
                 "tags": tags,
-            },
-            base_name=f"meta_{article_idx}"
+            }
         )
         results["meta_url"] = meta_url
     return results

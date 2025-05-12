@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str = Field(..., env="AWS_SECRET_ACCESS_KEY")
     AWS_REGION: str = Field("ap-northeast-2", env="AWS_REGION")
     S3_BUCKET: str = Field("news-shortform", env="S3_BUCKET")
+    BE_SERVER_URL: str = Field("BE-SERVER-URL", env="BE_SERVER_URL")
 
     class Config:
         env_file = ROOT_DIR / ".env"

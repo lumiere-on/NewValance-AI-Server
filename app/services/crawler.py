@@ -102,7 +102,7 @@ def enrich_articles(news_list: List[Dict]) -> List[Dict]:
                 parsed_date = datetime.fromisoformat(raw_date_str)
 
                 # 다시 ISO 8601 형식으로 문자열 변환 (T 포함)
-                iso_date = parsed_date.isoformat()  # 👉 결과: "2025-02-28T12:23:00"
+                iso_date = parsed_date.isoformat(timespec='seconds').replace(":", "-") # 👉 결과: "2025-02-28T12:23:00"
 
                 item["published_at"] = iso_date
                 print("ISO 형식으로 변환 완료")

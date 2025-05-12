@@ -1,6 +1,13 @@
 output/
-**/*.mp4
-**/*.mp3
+*.mp4
+*.mp3
 __pycache__/
 .git
 *.log
+0511venv/
+venv2/
+*/0511venv/
+*/venv2/
+*.tar
+*.tar.gz
+*.whl

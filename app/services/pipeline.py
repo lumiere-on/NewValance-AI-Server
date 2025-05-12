@@ -74,14 +74,14 @@ def run(sections: List[str] | None = None, upload: bool = True, limit: int = 5):
             ttv_paths = ttv.generate(
                 ttv_prompt,
                 article_idx=idx,
-                upload=False,
+                upload=True,
                 out_dir=video_dir,
             )
         except RuntimeError as e:
             msg = str(e)
             if "SKIP_MODEL_LOAD=1" in msg:
                 logger.info("🚀 SKIP_MODEL_LOAD, TTV 단계 건너뜀")
-                ttv_paths = []
+                video_dir = None
             else:
                 raise  # 그 외 예외는 그대로 터지게
 
@@ -100,7 +100,7 @@ def run(sections: List[str] | None = None, upload: bool = True, limit: int = 5):
             summary_text  = summary,
             tags          = tags,         
             upload        = upload,
-            video_dir     = None         # TTV 제거로 비움/None 처리
+            video_dir     = video_dir        # TTV 제거로 비움/None 처리
 
         )
 

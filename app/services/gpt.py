@@ -44,6 +44,19 @@ def _extract_json(text: str) -> str | None:
 
     return None
 
+def clean_json_text(text: str) -> str:
+    """스마트 따옴표, 유니코드 공백 제거"""
+    text = text.replace("‘", "'").replace("’", "'")
+    text = text.replace("“", '"').replace("”", '"')
+    text = re.sub(r"[\u00A0\u200B\u202F]", " ", text)
+
+        # 작은 따옴표 안전하게 처리
+    text = text.replace("\\'", "'")     # 이미 이스케이프된 건 복원
+    #text = text.replace("'", '"')       # 작은따옴표 → 큰따옴표
+    text = re.sub(r"\s{2,}", " ", text)
+
+
+    return text
 
 
 
@@ -68,7 +81,7 @@ def mk_TTS_prompt(cleaned: str) -> tuple[list[str], list[str]]:
     logger.debug(f"[TTS_RAW] {raw}")
 
     json_str = _extract_json(raw) or raw
-    json_str = json_str.replace("'", '"')
+    json_str = clean_json_text(json_str)
 
     try:
         parsed = json.loads(json_str)
@@ -80,8 +93,9 @@ def mk_TTS_prompt(cleaned: str) -> tuple[list[str], list[str]]:
 
     except Exception as e:
         logger.error(f"Invalid JSON parsing: {e}, RAW: {raw}")
+        with open(f"./debug_json_fail_{datetime.utcnow():%Y%m%d_%H%M%S}.txt", "w", encoding="utf-8") as f:
+            f.write(raw)
         raise ValueError(f"JSON 파싱 실패: {e}") from e
-
 
 
 def mk_TTV_prompt(formal: list[str]) -> list[str]:
@@ -125,7 +139,7 @@ def mk_TTV_prompt(formal: list[str]) -> list[str]:
         return []
     return parsed
 
-def mk_tags(summary: str) -> list[str]:
+def mk_tags(summary: str) -> str:
     """요약문에서 태그 4개 추출"""
     print("tag 산출 완료")
     return _tags_mod.generate(summary)
