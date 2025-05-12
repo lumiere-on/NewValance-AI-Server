@@ -15,10 +15,11 @@ moviepy==1.0.3
 opencv-python-headless==4.10.0.82
 imageio-ffmpeg==0.5.1
 
-torch==2.2.2
-torchvision==0.17.2
-torchaudio==2.2.2
-torchao>=0.2.0
+torch==2.3.0.dev*+cu124
+torchvision==0.18.0.dev*+cu124
+torchaudio==2.3.0.dev*+cu124
+torchao==1.0.0.dev*+cu124
+
 bitsandbytes==0.43.1
 accelerate==1.6.0
 
