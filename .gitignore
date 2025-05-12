@@ -2,6 +2,10 @@
 keys/
 
 venv*/
+0511venv/
+venv2/
+*/0511venv/
+*/venv2/
 
 output/
 *.mp4
