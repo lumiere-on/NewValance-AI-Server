@@ -24,11 +24,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
         python3.10 python3-pip \
         ffmpeg fonts-nanum libgl1 libgomp1 \
-        # headless-chrome 필수 libs
         libnss3 libx11-6 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 \
         libatk1.0-0 libatk-bridge2.0-0 libgbm1 libasound2 libpangocairo-1.0-0 \
         libcups2 fonts-liberation wget gnupg ca-certificates unzip && \
-    # ── Google Chrome stable (.deb)
     wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
         | gpg --dearmor -o /usr/share/keyrings/google-linux.gpg && \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux.gpg] \
@@ -36,7 +34,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
         > /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends google-chrome-stable && \
-    # ── Chromedriver (브라우저 버전에 맞춰 자동 다운로드)
     CHROME_MAJOR=$(google-chrome --version | cut -d ' ' -f3 | cut -d '.' -f1) && \
     wget -q https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR} -O /tmp/LATEST && \
     CHROMEDRIVER_VER=$(cat /tmp/LATEST) && \
@@ -44,7 +41,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     unzip /tmp/chromedriver.zip -d /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
     rm /tmp/chromedriver.zip /tmp/LATEST && \
-    # ── 정리
     rm -rf /var/lib/apt/lists/*
 
 
