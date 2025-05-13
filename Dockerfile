@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
-    RUN apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         python3.10 python3-pip \
         ffmpeg fonts-nanum libgl1 libgomp1 \
@@ -34,13 +34,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
         > /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends google-chrome-stable && \
-    CHROME_MAJOR=$(google-chrome --version | cut -d ' ' -f3 | cut -d '.' -f1) && \
-    wget -q https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR} -O /tmp/LATEST && \
-    CHROMEDRIVER_VER=$(cat /tmp/LATEST) && \
-    wget -q https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VER}/chromedriver_linux64.zip -O /tmp/chromedriver.zip && \
-    unzip /tmp/chromedriver.zip -d /usr/local/bin && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm /tmp/chromedriver.zip /tmp/LATEST && \
     rm -rf /var/lib/apt/lists/*
 
 
