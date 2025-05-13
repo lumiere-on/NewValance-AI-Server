@@ -10,10 +10,11 @@ RUN apt-get update && \
 
 # 파이썬 deps + PyTorch nightly/cu124 + torchao
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
+RUN pip install --no-cache-dir -U pip && \
     pip install --no-cache-dir \
-        --extra-index-url https://download.pytorch.org/whl/nightly/cu124 \
-        -r requirements.txt
+        --pre torch torchvision torchaudio \
+        --extra-index-url https://download.pytorch.org/whl/nightly/cu124 && \
+    pip install --no-cache-dir -r requirements.txt
 
 ######################## 2) Runtime (Slim) #################
 FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
@@ -24,13 +25,17 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # 런타임에 꼭 필요한 OS 패키지
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        python3.10 python3-pip \
         chromium-browser chromium-driver \
-        ffmpeg fonts-nanum libgl1 libgomp1 wget && \
+        ffmpeg fonts-nanum libgl1 libgomp1 wget unzip && \
+    ln -sf /usr/bin/python3.10 /usr/bin/python3 && \
     rm -rf /var/lib/apt/lists/*
 
 # 파이썬 런타임 복사
 COPY --from=builder /usr/local/lib/python3.10 /usr/local/lib/python3.10
 COPY --from=builder /usr/local/bin /usr/local/bin
+
+RUN ln -sf /usr/bin/python3.10 /usr/bin/python3
 
 # 불필요 파일 제거로 용량 ↓
 RUN find /usr/local/lib/python3.10/site-packages -name "tests" -type d -exec rm -rf {} + && \
