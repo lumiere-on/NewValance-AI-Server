@@ -7,8 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        python3.10 python3.10-dev python3-pip \
         build-essential gcc g++ make clang \
-        ffmpeg fonts-nanum libgl1 libgomp1 \
+        fonts-nanum \
         libnss3 libx11-6 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 \
         libatk1.0-0 libatk-bridge2.0-0 libgbm1 libasound2 libpangocairo-1.0-0 \
         libcups2 libxext6 libxfixes3 libxrender1 \
@@ -20,9 +21,9 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir \
-        -r requirements.txt
+RUN python3.10 -m pip install --upgrade pip && \
+    python3.10 -m pip install --no-cache-dir -r requirements.txt && \
+    rm -rf ~/.cache /root/.cache /tmp/*
 
 WORKDIR /app
 COPY . .
@@ -31,8 +32,16 @@ COPY . .
 FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
 
 WORKDIR /app
-COPY --from=builder /usr/local/lib/python3.10/dist-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=builder /usr/bin/python3.10 /usr/bin/python3.10
+COPY --from=builder /usr/local/bin/pip3 /usr/local/bin/pip3
+COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 COPY --from=builder /app /app
+
+RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
+    ln -sf /usr/local/bin/pip3 /usr/bin/pip && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg libgl1 libgomp1 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
