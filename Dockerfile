@@ -34,10 +34,10 @@ FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
 WORKDIR /app
 COPY --from=builder /usr/bin/python3.10 /usr/bin/python3.10
 COPY --from=builder /usr/local/bin/pip3 /usr/local/bin/pip3
-COPY --from=builder /usr/lib/python3.10/dist-packages/ /usr/lib/python3.10/dist-packages/
+COPY --from=builder /usr/local/lib/python3.10/dist-packages/ /usr/local/lib/python3.10/dist-packages/
 COPY --from=builder /app /app
-ENV PYTHONPATH=/usr/lib/python3.10/dist-packages
 
+ENV PYTHONPATH=/usr/local/lib/python3.10/dist-packages
 
 RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
     ln -sf /usr/local/bin/pip3 /usr/bin/pip && \
