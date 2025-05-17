@@ -41,15 +41,9 @@ def _load_pipe():
         CogVideoXTransformer3DModel,
     )
     from torchao.quantization import quantize_, int8_weight_only
-    from transformers import BitsAndBytesConfig, T5EncoderModel
+    from transformers import T5EncoderModel
 
     _quant = int8_weight_only
-    _bnb_cfg = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16,
-    )
 
     # text encoder
     _text_enc = T5EncoderModel.from_pretrained(
@@ -81,7 +75,6 @@ def _load_pipe():
         transformer=_xf,
         vae=_vae,
         torch_dtype=torch.bfloat16,
-        quantization_config=_bnb_cfg,
     )
     _pipe.enable_model_cpu_offload()
     _pipe.vae.enable_tiling()

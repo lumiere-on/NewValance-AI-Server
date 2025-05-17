@@ -12,3 +12,4 @@ venv2/
 *.tar.gz
 *.whl
 *venv*/
+.
