@@ -48,4 +48,4 @@ tqdm==4.67.1
 packaging==24.2
 jinja2==3.1.6
 
-runpod==1.0.2
+runpod
