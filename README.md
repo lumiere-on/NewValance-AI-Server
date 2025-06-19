@@ -32,11 +32,16 @@
 ---
 
 ## ⚡행
+app/
+ ├─ api/        
+  ├─ endpoints          # services에서 정의한 함수들을 endpoint로 실행
+  └─ init.py           # router 정의
  ├─ services/        # crawler, gpt, tts, ttv, moviepy …
  ├─ core             # 설정, 로거
  ├─ main.py          # FastAPI 엔트리
  └─ init.py           # fastapi 초기화
 requirements.txt      #설치할 라이브러리 및 모듈들 모음
+execute.py
 ```
 
 ### 소스 코드 설명 
