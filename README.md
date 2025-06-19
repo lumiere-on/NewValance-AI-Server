@@ -109,6 +109,10 @@ os.environ["S3_BUCKET_URL]=...
 
 # Moviepy
 os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"
+
+# Ngrok
+ngrok.set_auth_token("...")
+public_url = ngrok.connect(8000).public_url
 ```
 ---
 
