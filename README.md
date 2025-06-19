@@ -16,18 +16,14 @@
 
 ---
 
-## 프로젝트 개요
-- **목표** : <무엇을, 왜, 어떻게>
+## 프로젝트 내 AI 개요
+- **목표** : NewValance는 긴 글의 뉴스를 읽을 여유가 없는 현대인들이 빠르고 간편하게 사회 이슈를 습득할 수 있도록 뉴스 숏폼 영상을 제공하는 서비스이다. 뉴스 숏폼 영상은 뉴스 사이트에서 크롤링한 기사 자료를 바탕으로 GPT-4o-mini API를 이용한 텍스트 요약 및 가공, Text-To-Video 모델을 이용한 비디오 생성, Text-To-Speech API를 이용한 음성 생성 과정을 거친 뒤 영상 편집 라이브러리를 통해 위 과정으로 생성된 아웃풋들을 하나의 숏폼 영상으로 합산하여 생성된다
 - **주요 기능**
-  1. 뉴스 크롤링
-  2. gpt-4o-mini를 이용한 기사 정제 및 요약
-  3-1. TTS를 이용해 음성 생성
-  3-2. TTV를 이용해 영상 생성
-  5. 썸네일·태그 자동 생성 & S3 업로드
-- **Tech Stack**  
-  - **FastAPI** · Python 3.11  
-  - **PyTorch / Diffusers**: CogVideoX-1.5  
-  - **Google Cloud TTS**, **OpenAI GPT-4o**
+1. 뉴스 크롤링
+2. gpt-4o-mini를 이용한 기사 정제 및 요약
+3-1. TTS를 이용해 음성 생성
+3-2. TTV를 이용해 영상 생성
+4. 썸네일·태그 자동 생성 & S3 업로드
 
 ---
 
@@ -78,7 +74,7 @@ services/
 # 3) 아래 키 템플릿 복사+붙여넣기 후 키값 입력
 
 # 4) FastAPI + ngrok 런칭
-!python scripts/execute.py    # (≒ uvicorn + ngrok)
+!python execute.py    # (≒ uvicorn + ngrok)
 ```
 
 > 실행 후 `🌐 PUBLIC` URL 과 `🔗 SWAGGER` 링크가 출력됩니다.
@@ -112,6 +108,7 @@ os.environ["S3_BUCKET_URL]=...
 
 # Moviepy
 os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"
+```
 ---
 
 ## 🧪 테스트 방법
