@@ -18,9 +18,10 @@
 
 ---
 
-## 프로젝트 내 AI 개요
+## 1. 프로젝트 내 AI 개요
 - **목표** : NewValance는 긴 글의 뉴스를 읽을 여유가 없는 현대인들이 빠르고 간편하게 사회 이슈를 습득할 수 있도록 뉴스 숏폼 영상을 제공하는 서비스이다. 뉴스 숏폼 영상은 뉴스 사이트에서 크롤링한 기사 자료를 바탕으로 GPT-4o-mini API를 이용한 텍스트 요약 및 가공, Text-To-Video 모델을 이용한 비디오 생성, Text-To-Speech API를 이용한 음성 생성 과정을 거친 뒤 영상 편집 라이브러리를 통해 위 과정으로 생성된 아웃풋들을 하나의 숏폼 영상으로 합산하여 생성된다
-- **주요 기능**
+
+## 2. AI 파아프라인
 1. 뉴스 크롤링
 2. gpt-4o-mini를 이용한 기사 정제 및 요약
 3-1. TTS를 이용해 음성 생성
@@ -29,7 +30,7 @@
 
 ---
 
-## ⚡소스 코드 구조
+## 3. 소스 코드 구조
 ```
 app/
  ├─ api/        
@@ -62,7 +63,7 @@ services/
 
 ---
 
-## 🔧 Install → Build → Execute
+## 4. Install → Build → Execute
 
 ```bash
 # 1) Colab 노트북 생성 → 런타임을 A100으로 설정
@@ -84,7 +85,7 @@ services/
 
 ---
 
-## 🗝️ 키 템플릿
+## 5. 키 템플릿
 
 ```bash
 import os, subprocess, textwrap, sys, nest_asyncio, threading, time, pathlib
@@ -113,7 +114,7 @@ os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"
 ```
 ---
 
-## 🧪 테스트 방법
+## 6. 테스트 방법
 
 ```bash
 !python execute.py
@@ -131,13 +132,13 @@ curl -X POST http://localhost:8000/api/pipeline/ \
 ---
 
 
-## 📝 사용 오픈소스
+## 7. 사용 오픈소스
 
 * **[FastAPI](https://github.com/tiangolo/fastapi)** (MIT) – REST 서버
 * **[Selenium]** - 뉴스 크롤링
 * **[GPT(gpt-4o-mini)]** - 기사 정제 및 요약, 프롬프트 산출
 * **[Google Speech to text]** - TTS API. 프롬프트를 기반으로 음성 산출
-* **[Cogvideox1.5-5B]** - TTV momdel. 프롬프트를 기반으로 영상 산출출
+* **[CogVideoX1.5-5B]** - TTV momdel. 프롬프트를 기반으로 영상 산출출
 * **[MoviePy](https://github.com/Zulko/moviepy)** – 영상 병합
 * 기타 라이선스는 `requirements.txt` 참고
 
