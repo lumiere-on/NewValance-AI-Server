@@ -34,12 +34,14 @@
 ## ⚡ AI 파이프라인
 ```mermaid
 graph TD
-  A[뉴스 크롤링링] --> B[GPT 요약 & 프롬프트]
+  A[뉴스 크롤링] --> B[GPT 요약 & 프롬프트]
   B --> C[TTS(MP3)]
   B --> D[TTV(Video)]
   C & D --> E[MoviePy 병합·썸네일]
   E --> F[(S3 업로드)]
-````
+```
+
+
 
 * **GPU 필요 단계** : <br>`services/ttv.py` (CogVideoX 1.5)
 
@@ -64,6 +66,23 @@ scripts/
  └─ colab_fastapi.sh # 쉘 버전 자동 실행
 requirements.txt
 ```
+
+### 소스 코드 설명 
+```
+services/
+ ├─ crawler.py          # 네이버 뉴스 크롤링
+ ├─ gpt.py              #  기사 정체 -> 요약 -> 프롬프트 산출
+ ├─ tags.py              # 기사의 태그 산출
+ ├─ tts.py              # TTS API로 음성 산출
+ ├─ ttv.py              # TTV 모델로 음성 산출
+ ├─ moviepy.py           # 음성, 영상, 자막을 하나의 숏폼으로 합산
+ ├─ to_request.py       #BE서버에 메타데이터 전송
+ ├─ storage.py              # S3에 영상과 썸네일 업로드
+ └─logger.py             # 코드 실행 시 로그 산출
+
+
+
+
 
 ---
 
