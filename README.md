@@ -10,10 +10,9 @@
 2. [⚡ AI 파이프라인]
 3. [🗂️ 소스 코드 구조]
 4. [🔧 Install → Build → Execute]
-5. [🗝️ 키값 설정]
+5. [🗝️ 키 템플릿릿]
 6. [🧪 테스트 방법]
-7. [📁 샘플 데이터 & DB]
-8. [📝 사용 오픈소스]
+7. [📝 사용 오픈소스]
 
 ---
 
@@ -92,18 +91,30 @@ requirements.txt
 
 ## 🗝️ 키 템플릿
 
-```dotenv
-# OpenAI
-OPENAI_API_KEY=sk-...
+```bash
+import os, subprocess, textwrap, sys, nest_asyncio, threading, time, pathlib
+from pyngrok import ngrok
 
+#Google cloud key path
+key_path = "/content/NewValance-AI-Server/app/keys/tts.json"
+!assert pathlib.Path(key_path).exists(),
 # Google Cloud TTS
-GOOGLE_APPLICATION_CREDENTIALS=/abs/path/to/tts.json
+os.environ[GOOGLE_APPLICATION_CREDENTIALS]=key_path
+
+#set environment variables
+# OpenAI
+os.environ[OPENAI API_KEY]="sk-..."
 
 # AWS S3
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...
-AWS_S3_BUCKET=news-shortform
+os.environ[AWS_ACCESS_KEY_ID]="AKIA..."
+os.environ[AWS_SECRET_ACCESS_KEY]=...
+os.environ[AWS_S3_BUCKET]=...
+os.environ["AWS_REGION"] = "ap-northeast-2"
+os.environ["S3_BUCKET"] = ...
+os.environ["S3_BUCKET_URL]=...
 
+# Moviepy
+os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"
 ---
 
 ## 🧪 테스트 방법
@@ -126,8 +137,10 @@ curl -X POST http://localhost:8000/api/pipeline/ \
 ## 📝 사용 오픈소스
 
 * **[FastAPI](https://github.com/tiangolo/fastapi)** (MIT) – REST 서버
-* **[Diffusers](https://github.com/huggingface/diffusers)** (Apache-2.0) – CogVideoX 파이프라인
-* **[torch-ao](https://github.com/pytorch/ao)** – int8 양자화
+* **[Selenium]** - 뉴스 크롤링
+* **[GPT(gpt-4o-mini)]** - 기사 정제 및 요약, 프롬프트 산출
+* **[Google Speech to text]** - TTS API. 프롬프트를 기반으로 음성 산출
+* **[Cogvideox1.5-5B]** - TTV momdel. 프롬프트를 기반으로 영상 산출출
 * **[MoviePy](https://github.com/Zulko/moviepy)** – 영상 병합
 * 기타 라이선스는 `requirements.txt` 참고
 
@@ -135,64 +148,4 @@ curl -X POST http://localhost:8000/api/pipeline/ \
 
 ---
 
-### 📂 추가 파일: `.env.template`
-```dotenv
-# === API Keys (fill yours) ===
-OPENAI_API_KEY=
-GOOGLE_APPLICATION_CREDENTIALS=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_S3_BUCKET=
 
-# === Optional Flags ===
-# SKIP_MODEL_LOAD=1   # GPU 없으면 TTV 스킵
-# SKIP_TTS=1          # TTS 스킵
-````
-
-### 🚀 추가 파일: `scripts/execute.py`
-
-```python
-import os, subprocess, threading, time, nest_asyncio
-from pyngrok import ngrok
-
-# FastAPI 백그라운드
-def run_uvicorn():
-    proc = subprocess.Popen(
-        ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"],
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    for line in proc.stdout:
-        print("🖥️", line.rstrip())
-
-threading.Thread(target=run_uvicorn, daemon=True).start()
-
-# 서버 부팅 대기
-print("⏳  FastAPI booting…")
-import requests, urllib3
-urllib3.disable_warnings()
-while True:
-    try:
-        requests.get("http://127.0.0.1:8000", timeout=1, verify=False); break
-    except Exception: time.sleep(1)
-print("✅  FastAPI up!")
-
-# ngrok 연결
-nest_asyncio.apply()
-ngrok.set_auth_token(os.getenv("NGROK_AUTHTOKEN", ""))
-public_url = ngrok.connect(8000).public_url
-print("🌐 PUBLIC :", public_url)
-print("🔗 SWAGGER:", public_url + "/swagger")
-
-# 유지
-while True:
-    time.sleep(300)
-```
-
-> **실행**
->
-> ```bash
-> !export NGROK_AUTHTOKEN="2Oxxx..."  # Colab 셀
-> !python scripts/execute.py
-> ```
-
-README 그대로 넣고 키·프로젝트 정보만 바꾸면 누구나 Colab에서 바로 재현할 수 있어요! 🥳
-필요한 수정점 있으면 편하게 알려주세요 💬
