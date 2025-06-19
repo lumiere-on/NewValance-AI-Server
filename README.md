@@ -31,7 +31,8 @@
 
 ---
 
-## ⚡행
+## ⚡소스 코드 구조
+```
 app/
  ├─ api/        
   ├─ endpoints          # services에서 정의한 함수들을 endpoint로 실행
