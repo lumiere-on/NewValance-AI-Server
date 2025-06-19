@@ -31,40 +31,12 @@
 
 ---
 
-## ⚡ AI 파이프라인
-```mermaid
-graph TD
-  A[뉴스 크롤링] --> B[GPT 요약 & 프롬프트]
-  B --> C[TTS(MP3)]
-  B --> D[TTV(Video)]
-  C & D --> E[MoviePy 병합·썸네일]
-  E --> F[(S3 업로드)]
-```
-
-
-
-* **GPU 필요 단계** : <br>`services/ttv.py` (CogVideoX 1.5)
-
-  *본 서버에서는 Colab GPU ✔️를 이용해 코드 실행
-  * / CPU로 실행 시 `SKIP_MODEL_LOAD=1` 로 자동 건너뜀
-
----
-
-## 🗂️ 소스 코드 구조
-
-```
-app/
- ├─ main.py          # FastAPI 엔트리
- ├─ api/             # 라우터 모음
+## ⚡행
  ├─ services/        # crawler, gpt, tts, ttv, moviepy …
  ├─ core             # 설정, 로거
  ├─ main.py          # FastAPI 엔트리
  └─ init.py           # fastapi 초기화
-
-scripts/
- ├─ execute.py       # FastAPI + ngrok 런처 (Colab 전용)
- └─ colab_fastapi.sh # 쉘 버전 자동 실행
-requirements.txt
+requirements.txt      #설치할 라이브러리 및 모듈들 모음
 ```
 
 ### 소스 코드 설명 
@@ -79,7 +51,7 @@ services/
  ├─ to_request.py       #BE서버에 메타데이터 전송
  ├─ storage.py              # S3에 영상과 썸네일 업로드
  └─logger.py             # 코드 실행 시 로그 산출
-
+```
 
 
 
@@ -139,6 +111,7 @@ os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"
 ## 🧪 테스트 방법
 
 ```bash
+!python execute.py
 # 1. 헬스 체크
 curl http://localhost:8000/
 
