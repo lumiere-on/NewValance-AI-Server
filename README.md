@@ -125,7 +125,7 @@ curl -X POST http://localhost:8000/api/pipeline/ \
      -d '{"sections":null,"upload":false,"limit":1,"use_gpu":true}'
 ```
 
-* Swagger UI (/swagger) 에서도 직접 테스트 가능!
+* Swagger UI (/swagger) 에서도 직접 테스트 가능하며, 이 방법을 가장 추천드립니다
 
 ---
 
@@ -140,7 +140,3 @@ curl -X POST http://localhost:8000/api/pipeline/ \
 * **[MoviePy](https://github.com/Zulko/moviepy)** – 영상 병합
 * 기타 라이선스는 `requirements.txt` 참고
 
-````
-
-
->>>>>>> dev
