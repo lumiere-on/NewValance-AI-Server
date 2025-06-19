@@ -1,7 +1,5 @@
-# NewValance-AI-Server
+# 📰NewValance-AI-Server
 ## 이화여자대학교 캡스톤디자인과창업프로젝트 3조 쌈뽕워리어즈 AI server
-
-# 📰 NewValance-AI-Server
 
 > 뉴스 크롤링 → GPT 정제 및 요약 → TTS/TTV → 🎬 숏폼 영상 완성  
 
