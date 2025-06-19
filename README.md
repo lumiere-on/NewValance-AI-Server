@@ -66,7 +66,7 @@ services/
 ```bash
 # 1) Colab 노트북 생성 → 런타임을 A100으로 설정
 !git init -q
-!git clone https://github.com/<USER>/<REPO>.git
+!git clone https://github.com/lumiere-on/NewValance-AI-Server.git
 %cd <REPO>
 
 # 2) 의존성 설치
