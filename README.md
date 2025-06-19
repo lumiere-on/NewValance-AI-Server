@@ -1,5 +1,4 @@
 
-````markdown
 # 📰 NewValance-AI-Server
 
 > 뉴스 크롤링 → GPT 정제 및 요약 → TTS/TTV → 🎬 숏폼 영상 완성  
@@ -7,23 +6,25 @@
 ---
 
 ## 📚 Table of Contents
-1. [프로젝트 개요](# 프로젝트 개요)
-2. [⚡ AI 파이프라인](#⚡AI 파이프라인)
-3. [🗂️ 소스 코드 구조](#️소스코드 구조)
-4. [🔧 Install → Build → Execute](#-install-→-build-→-execute)
-5. [🗝️ 키값 설정](#️-키비밀값-설정)
-6. [🧪 테스트 방법](#-테스트-방법)
-7. [📁 샘플 데이터 & DB](#-샘플-데이터--db)
-8. [📝 사용 오픈소스](#-사용-오픈소스)
+1. [프로젝트 개요]
+2. [⚡ AI 파이프라인]
+3. [🗂️ 소스 코드 구조]
+4. [🔧 Install → Build → Execute]
+5. [🗝️ 키값 설정]
+6. [🧪 테스트 방법]
+7. [📁 샘플 데이터 & DB]
+8. [📝 사용 오픈소스]
 
 ---
 
 ## 프로젝트 개요
 - **목표** : <무엇을, 왜, 어떻게>
 - **주요 기능**
-  1. 실시간 뉴스 크롤링 & 요약
-  2. TTS(mp3) 및 TTV(영상) 생성
-  3. 썸네일·태그 자동 생성 & S3 업로드
+  1. 뉴스 크롤링
+  2. gpt-4o-mini를 이용한 기사 정제 및 요약
+  3-1. TTS를 이용해 음성 생성
+  3-2. TTV를 이용해 영상 생성
+  5. 썸네일·태그 자동 생성 & S3 업로드
 - **Tech Stack**  
   - **FastAPI** · Python 3.11  
   - **PyTorch / Diffusers**: CogVideoX-1.5  
@@ -31,10 +32,10 @@
 
 ---
 
-## ⚡ AI 파이프라인 한눈에
+## ⚡ AI 파이프라인
 ```mermaid
 graph TD
-  A[뉴스 크롤러] --> B[GPT 요약 & 프롬프트]
+  A[뉴스 크롤링링] --> B[GPT 요약 & 프롬프트]
   B --> C[TTS(MP3)]
   B --> D[TTV(Video)]
   C & D --> E[MoviePy 병합·썸네일]
@@ -43,7 +44,8 @@ graph TD
 
 * **GPU 필요 단계** : <br>`services/ttv.py` (CogVideoX 1.5)
 
-  * Colab GPU ✔️ / CPU 시 `SKIP_MODEL_LOAD=1` 로 자동 건너뜀
+  *본 서버에서는 Colab GPU ✔️를 이용해 코드 실행
+  * / CPU로 실행 시 `SKIP_MODEL_LOAD=1` 로 자동 건너뜀
 
 ---
 
@@ -54,12 +56,13 @@ app/
  ├─ main.py          # FastAPI 엔트리
  ├─ api/             # 라우터 모음
  ├─ services/        # crawler, gpt, tts, ttv, moviepy …
- └─ core/            # 설정, 로거
+ ├─ core             # 설정, 로거
+ ├─ main.py          # FastAPI 엔트리
+ └─ init.py           # fastapi 초기화
+
 scripts/
  ├─ execute.py       # FastAPI + ngrok 런처 (Colab 전용)
  └─ colab_fastapi.sh # 쉘 버전 자동 실행
-data/                # (옵션) 샘플 뉴스 / 테스트 파일
-.env.template        # 키 입력 템플릿
 requirements.txt
 ```
 
@@ -67,10 +70,8 @@ requirements.txt
 
 ## 🔧 Install → Build → Execute
 
-### 🚀 Colab 5-step Quick Start
-
 ```bash
-# 1) 새 Colab → GPU 런타임
+# 1) Colab 노트북 생성 → 런타임을 A100으로 설정
 !git init -q
 !git clone https://github.com/<USER>/<REPO>.git
 %cd <REPO>
@@ -78,30 +79,18 @@ requirements.txt
 # 2) 의존성 설치
 !pip install -q -r requirements.txt
 
-# 3) 키 템플릿 복사 후 값 입력
-!cp .env.template .env
-#  ↓ Colab 좌측 Files 패널에서 .env 열어 키값 채우기
+# 3) 아래 키 템플릿 복사+붙여넣기 후 키값 입력
 
 # 4) FastAPI + ngrok 런칭
 !python scripts/execute.py    # (≒ uvicorn + ngrok)
 ```
 
 > 실행 후 `🌐 PUBLIC` URL 과 `🔗 SWAGGER` 링크가 출력됩니다.
-
-### 💻 Local (Docker 없는 경우)
-
-```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.template .env   # 키 입력
-uvicorn app.main:app --reload
-```
+> Swagger에서 pipeline을 "Try it out"을 눌러 동작을 확인합니다. 
 
 ---
 
-## 🗝️ 키/비밀값 설정
-
-`.env.template` 예시 ↓
+## 🗝️ 키 템플릿
 
 ```dotenv
 # OpenAI
@@ -114,14 +103,6 @@ GOOGLE_APPLICATION_CREDENTIALS=/abs/path/to/tts.json
 AWS_ACCESS_KEY_ID=AKIA...
 AWS_SECRET_ACCESS_KEY=...
 AWS_S3_BUCKET=news-shortform
-
-# (옵션) SKIP_* 토글
-# SKIP_MODEL_LOAD=1   # GPU 없을 땐 주석 해제
-# SKIP_TTS=1          # TTS 건너뛰기
-```
-
-> **필수** 항목만 채우면 됩니다.
-> 키 보안상 Git에 올리면 ❌ → `.gitignore` 포함!
 
 ---
 
@@ -141,15 +122,6 @@ curl -X POST http://localhost:8000/api/pipeline/ \
 
 ---
 
-## 📁 샘플 데이터 & DB
-
-| 폴더             | 내용                    |
-| -------------- | --------------------- |
-| `data/sample/` | 예시 뉴스 HTML & JSON     |
-| `data/exp/`    | 모델 테스트 결과 (프롬프트·영상)   |
-| DB             | S3 버킷에 업로드된 결과 URL 참고 |
-
----
 
 ## 📝 사용 오픈소스
 
