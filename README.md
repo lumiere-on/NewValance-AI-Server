@@ -116,13 +116,10 @@ os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"
 
 ```bash
 !python execute.py
-# 1. 헬스 체크
+
+# 로컬호스트에서 확인
 curl http://localhost:8000/
 
-# 2. 파이프라인 1건 실행
-curl -X POST http://localhost:8000/api/pipeline/ \
-     -H "Content-Type: application/json" \
-     -d '{"sections":null,"upload":false,"limit":1,"use_gpu":true}'
 ```
 
 * Swagger UI (/swagger) 에서도 직접 테스트 가능하며, 이 방법을 가장 추천드립니다
